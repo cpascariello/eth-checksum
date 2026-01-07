@@ -27,7 +27,7 @@ npm run preview  # Preview production build locally
 Single-component app with all UI and logic in `src/App.tsx`:
 - Uses `getAddress()` from ethers.js to validate and checksum addresses
 - Triggers on button click, Enter key, or input blur
-- State: `inputValue`, `checksummed`, `error`, `copied`, `isDark`, `mousePos`
+- State: `inputValue`, `checksummed`, `error`, `copied`, `isDark`, `mousePos`, `squareColor`
 
 Build outputs static files to `dist/` for deployment.
 
@@ -47,3 +47,12 @@ Features:
 - Gradient opacity (outer squares fade)
 - Mouse-driven parallax translation
 - Mouse-driven rotation (left = negative, right = positive)
+
+## Color Picker
+
+Color selection circles in top-right corner (left of theme toggle):
+
+- `COLORS` array: Available color options (neutral, red, orange, yellow, emerald, blue, fuchsia, rose)
+- `COLOR_VALUES` object: Hex values for each color at 300 (light), 600 (picker), 700 (dark) weights
+- Circle fill uses 600 weight
+- Square borders use 300 (light mode) / 700 (dark mode) weights

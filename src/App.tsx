@@ -8,6 +8,23 @@ const SQUARE_STEP_INCREMENT = 0.1; // Additional pixels added to each successive
 const SQUARE_ROTATION = 1; // Degrees of rotation added per square
 const PARALLAX_MULTIPLIER = 2; // Intensity of parallax effect per square
 
+// Color palette for decorative squares
+const COLORS = [
+  'neutral', 'red', 'orange', 'yellow', 'emerald', 'blue', 'fuchsia', 'rose'
+] as const;
+
+// Tailwind color values for 300 (light), 600 (picker), 700 (dark) weights
+const COLOR_VALUES: Record<typeof COLORS[number], { light: string; picker: string; dark: string }> = {
+  neutral: { light: '#d4d4d4', picker: '#525252', dark: '#404040' },
+  red:     { light: '#fca5a5', picker: '#dc2626', dark: '#b91c1c' },
+  orange:  { light: '#fdba74', picker: '#ea580c', dark: '#c2410c' },
+  yellow:  { light: '#fde047', picker: '#ca8a04', dark: '#a16207' },
+  emerald: { light: '#6ee7b7', picker: '#059669', dark: '#047857' },
+  blue:    { light: '#93c5fd', picker: '#2563eb', dark: '#1d4ed8' },
+  fuchsia: { light: '#f0abfc', picker: '#c026d3', dark: '#a21caf' },
+  rose:    { light: '#fda4af', picker: '#e11d48', dark: '#be123c' },
+};
+
 function getInitialTheme(): boolean {
   const stored = localStorage.getItem("theme");
   if (stored) return stored === "dark";
@@ -21,6 +38,7 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [isDark, setIsDark] = useState(getInitialTheme);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [squareColor, setSquareColor] = useState<typeof COLORS[number]>('neutral');
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
@@ -78,13 +96,26 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col">
+      {/* Color picker */}
+      <div className="fixed top-6 right-14 flex gap-1 flex-wrap max-w-64 justify-end items-center">
+        {COLORS.map((color) => (
+          <button
+            key={color}
+            onClick={() => setSquareColor(color)}
+            className={`w-6 h-6 rounded-full transition-transform ${squareColor === color ? 'ring-2 ring-white dark:ring-neutral-800' : 'hover:opacity-80'}`}
+            style={{ backgroundColor: COLOR_VALUES[color].picker }}
+            aria-label={`Set square color to ${color}`}
+          />
+        ))}
+      </div>
+
       <button
         onClick={() => setIsDark(!isDark)}
-        className="fixed top-4 right-4 p-2 rounded-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 transition-colors"
+        className="fixed top-5 right-4 p-2 rounded-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 transition-colors"
         aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       >
         {isDark ? (
-          <svg className="w-5 h-5 text-neutral-200" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-3 h-3 text-neutral-200" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
@@ -92,7 +123,7 @@ function App() {
             />
           </svg>
         ) : (
-          <svg className="w-5 h-5 text-neutral-700" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-3 h-3 text-neutral-700" fill="currentColor" viewBox="0 0 20 20">
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
           </svg>
         )}
@@ -104,16 +135,17 @@ function App() {
           {Array.from({ length: SQUARE_COUNT }, (_, i) => (
             <div
               key={i}
-              className="absolute border border-neutral-300 dark:border-neutral-700 rounded-xl pointer-events-none"
+              className="absolute border rounded-xl pointer-events-none"
               style={{
                 inset: `-${(i + 1) * SQUARE_STEP + SQUARE_STEP_INCREMENT * ((i + 1) * i) / 2}px`,
                 opacity: 1 - (i + 1) / (SQUARE_COUNT + 1),
                 transform: `rotate(${mousePos.x * SQUARE_ROTATION * (i + 1)}deg) translate(${mousePos.x * i * PARALLAX_MULTIPLIER}px, ${mousePos.y * i * PARALLAX_MULTIPLIER}px)`,
+                borderColor: isDark ? COLOR_VALUES[squareColor].dark : COLOR_VALUES[squareColor].light,
               }}
             />
           ))}
           <div className="relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xl p-8">
-          <h1 className="text-2xl font-normal text-center mb-6">
+          <h1 className="text-xl font-thin text-center mb-6">
             ETH Address Checksummer
           </h1>
 
