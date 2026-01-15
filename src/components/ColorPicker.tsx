@@ -6,7 +6,7 @@ export function ColorPicker() {
   const { squareColor } = settings;
 
   return (
-    <div className="fixed top-6 right-14 flex gap-1 flex-wrap max-w-64 justify-end items-center">
+    <div className="fixed top-6 right-14 z-50 flex gap-1 flex-wrap max-w-64 justify-end items-center">
       {COLORS.map((color) => (
         <button
           key={color}
