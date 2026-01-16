@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DecorativeSquares } from './components/DecorativeSquares';
-import { ColorPicker } from './components/ColorPicker';
-import { ThemeToggle } from './components/ThemeToggle';
 import { ChecksumForm } from './components/ChecksumForm';
+import { SettingsPanel } from './components/SettingsPanel';
 
 function App() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -20,8 +19,7 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col">
-      <ColorPicker />
-      <ThemeToggle />
+      <SettingsPanel />
 
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="relative max-w-xl w-full">

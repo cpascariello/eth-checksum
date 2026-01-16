@@ -20,6 +20,10 @@ interface SettingsState {
   isDark: boolean;
   setIsDark: (isDark: boolean) => void;
   toggleTheme: () => void;
+
+  // Settings Panel (not persisted)
+  isSettingsPanelOpen: boolean;
+  toggleSettingsPanel: () => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -50,6 +54,10 @@ export const useSettingsStore = create<SettingsState>()(
           localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
           return { isDark: newIsDark };
         }),
+
+      isSettingsPanelOpen: false,
+      toggleSettingsPanel: () =>
+        set((state) => ({ isSettingsPanelOpen: !state.isSettingsPanelOpen })),
     }),
     {
       name: 'eth-checksum-settings',
