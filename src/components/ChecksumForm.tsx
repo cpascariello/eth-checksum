@@ -1,5 +1,9 @@
 import { useState, useCallback } from 'react';
 import { getAddress } from 'ethers';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export function ChecksumForm() {
   const [inputValue, setInputValue] = useState('');
@@ -46,52 +50,58 @@ export function ChecksumForm() {
   };
 
   return (
-    <div className="relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xl p-8">
-      <h1 className="text-xl font-thin text-center mb-6">
-        ETH Address Checksummer
-      </h1>
+    <Card className="shadow-xl">
+      <CardHeader>
+        <CardTitle className="text-xl font-thin text-center">
+          ETH Address Checksummer
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <label htmlFor="eth-address" className="sr-only">
+          Ethereum Address
+        </label>
+        <Input
+          id="eth-address"
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          onBlur={handleChecksum}
+          placeholder="0x..."
+          className={cn(
+            "h-12",
+            error && "border-red-500 bg-red-100/50 dark:bg-red-900/30 text-red-600 dark:text-red-400 focus-visible:ring-red-400/60 dark:focus-visible:ring-red-800/60"
+          )}
+        />
 
-      <label htmlFor="eth-address" className="sr-only">
-        Ethereum Address
-      </label>
-      <input
-        id="eth-address"
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-        onBlur={handleChecksum}
-        placeholder="0x..."
-        className={`w-full rounded-md px-4 py-3 focus:outline-none focus:ring-2 placeholder-neutral-400 dark:placeholder-neutral-500 border ${
-          error
-            ? 'bg-red-100/50 dark:bg-red-900/30 border-red-500 dark:border-red-500 text-red-600 dark:text-red-400 focus:ring-4 focus:ring-red-400/60 dark:focus:ring-red-800/60'
-            : 'bg-neutral-50 dark:bg-neutral-800 border-neutral-200/50 dark:border-neutral-700 focus:ring-neutral-100 dark:focus:ring-neutral-600/20 dark:text-white'
-        }`}
-      />
+        <Button
+          onClick={handleChecksum}
+          disabled={!inputValue.trim()}
+          className="w-full h-12"
+        >
+          Checksum
+        </Button>
 
-      <button
-        onClick={handleChecksum}
-        disabled={!inputValue.trim()}
-        className="w-full mt-4 rounded-md px-4 py-3 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 border border-neutral-900 dark:border-neutral-100 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-      >
-        Checksum
-      </button>
-
-      {checksummed && (
-        <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-          <div className="flex items-start gap-3">
-            <p className="font-mono text-sm break-all flex-1 text-green-600 dark:text-green-300">
-              {checksummed}
-            </p>
-            <button
-              onClick={handleCopy}
-              className="shrink-0 px-3 py-1 text-xs bg-green-100 dark:bg-green-800 hover:bg-green-200 dark:hover:bg-green-700 text-green-600 dark:text-green-300 rounded-lg transition-colors"
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+        {checksummed && (
+          <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <p className="font-mono text-sm break-all flex-1 text-green-600 dark:text-green-300">
+                  {checksummed}
+                </p>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleCopy}
+                  className="bg-green-100 dark:bg-green-800 hover:bg-green-200 dark:hover:bg-green-700 text-green-600 dark:text-green-300"
+                >
+                  {copied ? 'Copied!' : 'Copy'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </CardContent>
+    </Card>
   );
 }

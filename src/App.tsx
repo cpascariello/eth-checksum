@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { DecorativeSquares } from './components/DecorativeSquares';
-import { ChecksumForm } from './components/ChecksumForm';
-import { SettingsPanel } from './components/SettingsPanel';
+import { DecorativeSquares } from '@/components/DecorativeSquares';
+import { ChecksumForm } from '@/components/ChecksumForm';
+import { SettingsPanel } from '@/components/SettingsPanel';
 
 function App() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });

@@ -1,5 +1,5 @@
-import { useSettingsStore } from '../store/settings';
-import { COLORS, COLOR_VALUES } from '../types';
+import { useSettingsStore } from '@/store/settings';
+import { COLORS, COLOR_VALUES } from '@/types';
 
 export function ColorPicker() {
   const { settings, updateSetting } = useSettingsStore();
