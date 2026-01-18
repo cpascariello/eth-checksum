@@ -50,7 +50,7 @@ export function ChecksumForm() {
   };
 
   return (
-    <Card className="shadow-xl">
+    <Card className="relative z-10 shadow-xl bg-white dark:bg-neutral-950">
       <CardHeader>
         <CardTitle className="text-xl font-thin text-center">
           ETH Address Checksummer

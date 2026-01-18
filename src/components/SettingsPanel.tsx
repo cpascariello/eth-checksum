@@ -1,10 +1,106 @@
-import { Settings, X, RotateCcw } from 'lucide-react';
+import { useState } from 'react';
+import { Settings, X, RotateCcw, ChevronDown } from 'lucide-react';
 import { useSettingsStore } from '@/store/settings';
 import { ColorPicker } from './ColorPicker';
 import { ThemeToggle } from './ThemeToggle';
 import { WalletButton } from './WalletButton';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
+
+const MULTIPLIERS = [1, 2, 5, 10] as const;
+
+interface SliderWithMultipliersProps {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min: number;
+  baseMax: number;
+  step: number;
+  formatValue?: (value: number) => string;
+}
+
+function SliderWithMultipliers({
+  label,
+  value,
+  onChange,
+  min,
+  baseMax,
+  step,
+  formatValue = (v) => String(v),
+}: SliderWithMultipliersProps) {
+  const [multiplier, setMultiplier] = useState(1);
+  const max = baseMax * multiplier;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between items-center text-sm">
+        <span className="font-medium">{label}</span>
+        <span className="text-muted-foreground tabular-nums">
+          {formatValue(value)}
+        </span>
+      </div>
+      <div className="flex gap-1 mb-4">
+        {MULTIPLIERS.map((mult) => (
+          <button
+            key={mult}
+            onClick={() => setMultiplier(mult)}
+            className={`px-2 py-0.5 text-xs rounded border transition-colors ${
+              multiplier === mult
+                ? 'border-primary bg-primary text-primary-foreground'
+                : 'border-border bg-background hover:bg-accent hover:text-accent-foreground'
+            }`}
+          >
+            {mult}x
+          </button>
+        ))}
+      </div>
+      <Slider
+        value={[value]}
+        onValueChange={([v]) => onChange(v)}
+        min={min}
+        max={max}
+        step={step}
+      />
+    </div>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  children,
+  defaultOpen = true,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className="border border-border rounded-md">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between text-base font-semibold w-full text-left p-4"
+      >
+        {title}
+        <ChevronDown
+          className={`h-4 w-4 transition-transform duration-200 ${isOpen ? '' : '-rotate-90'}`}
+        />
+      </button>
+      <div
+        className={`grid transition-all duration-200 ease-in-out ${
+          isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="px-4 py-4">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function SettingsPanel() {
   const {
@@ -14,6 +110,12 @@ export function SettingsPanel() {
     updateSetting,
     resetToDefaults,
   } = useSettingsStore();
+  const [resetKey, setResetKey] = useState(0);
+
+  const handleReset = () => {
+    resetToDefaults();
+    setResetKey((k) => k + 1);
+  };
 
   return (
     <>
@@ -27,8 +129,8 @@ export function SettingsPanel() {
       )}
 
       <div
-        className={`fixed top-0 right-0 h-full w-[416px] z-50 transition-transform duration-300 ease-in-out ${
-          isSettingsPanelOpen ? 'translate-x-0' : 'translate-x-[416px]'
+        className={`fixed top-0 right-0 h-full w-[496px] z-50 transition-transform duration-300 ease-in-out ${
+          isSettingsPanelOpen ? 'translate-x-0' : 'translate-x-[496px]'
         }`}
       >
         {/* Toggle Button - positioned to the left of the panel */}
@@ -48,129 +150,89 @@ export function SettingsPanel() {
         </Button>
 
         {/* Panel */}
-        <div className="absolute top-4 bottom-4 right-4 w-[400px] rounded-md bg-background border border-border shadow-lg p-6 overflow-y-auto">
-          {/* Theme Toggle - top right of panel */}
-          <div className="absolute top-4 right-4">
+        <div className="absolute top-4 bottom-4 right-4 w-[480px] rounded-md bg-background border border-border shadow-lg p-6 overflow-y-auto">
+          {/* Top row - Wallet left, Theme right */}
+          <div className="flex justify-between items-center mb-12">
+            <WalletButton />
             <ThemeToggle />
           </div>
 
-          <h2 className="pt-8 text-lg font-semibold">Settings</h2>
-
-          <div className="mt-6 space-y-6">
-            {/* Wallet section */}
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                Wallet
-              </h3>
-              <WalletButton />
-            </div>
-
+          <div className="space-y-2">
             {/* Square Color section */}
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                Square Color
-              </h3>
+            <CollapsibleSection title="Square Color">
               <ColorPicker />
-            </div>
+            </CollapsibleSection>
 
             {/* Square Settings section */}
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-4">
-                Square Settings
-              </h3>
-              <div className="space-y-5">
-                {/* Square Count */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Square Count</span>
-                    <span className="text-muted-foreground tabular-nums">
-                      {settings.squareCount}
-                    </span>
-                  </div>
-                  <Slider
-                    value={[settings.squareCount]}
-                    onValueChange={([value]) => updateSetting('squareCount', value)}
-                    min={10}
-                    max={100}
-                    step={1}
-                  />
-                </div>
+            <CollapsibleSection title="Square Settings">
+              <div className="space-y-12">
+                {/* Square Count - full width */}
+                <SliderWithMultipliers
+                  key={`squareCount-${resetKey}`}
+                  label="Square Count"
+                  value={settings.squareCount}
+                  onChange={(v) => updateSetting('squareCount', v)}
+                  min={10}
+                  baseMax={100}
+                  step={1}
+                />
 
-                {/* Square Spacing */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Square Spacing</span>
-                    <span className="text-muted-foreground tabular-nums">
-                      {settings.squareStep}
-                    </span>
-                  </div>
-                  <Slider
-                    value={[settings.squareStep]}
-                    onValueChange={([value]) => updateSetting('squareStep', value)}
+                {/* Spacing row - 2 columns */}
+                <div className="grid grid-cols-2 gap-4">
+                  <SliderWithMultipliers
+                    key={`squareStep-${resetKey}`}
+                    label="Square Spacing"
+                    value={settings.squareStep}
+                    onChange={(v) => updateSetting('squareStep', v)}
                     min={1}
-                    max={20}
+                    baseMax={20}
                     step={1}
                   />
-                </div>
 
-                {/* Spacing Acceleration */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Spacing Acceleration</span>
-                    <span className="text-muted-foreground tabular-nums">
-                      {settings.squareStepIncrement.toFixed(2)}
-                    </span>
-                  </div>
-                  <Slider
-                    value={[settings.squareStepIncrement]}
-                    onValueChange={([value]) => updateSetting('squareStepIncrement', value)}
+                  <SliderWithMultipliers
+                    key={`squareStepIncrement-${resetKey}`}
+                    label="Spacing Acceleration"
+                    value={settings.squareStepIncrement}
+                    onChange={(v) => updateSetting('squareStepIncrement', v)}
                     min={0}
-                    max={1}
+                    baseMax={1}
                     step={0.05}
+                    formatValue={(v) => v.toFixed(2)}
                   />
                 </div>
 
-                {/* Rotation */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Rotation</span>
-                    <span className="text-muted-foreground tabular-nums">
-                      {settings.squareRotation.toFixed(1)}
-                    </span>
-                  </div>
-                  <Slider
-                    value={[settings.squareRotation]}
-                    onValueChange={([value]) => updateSetting('squareRotation', value)}
+                {/* Motion row - 2 columns */}
+                <div className="grid grid-cols-2 gap-4">
+                  <SliderWithMultipliers
+                    key={`squareRotation-${resetKey}`}
+                    label="Rotation"
+                    value={settings.squareRotation}
+                    onChange={(v) => updateSetting('squareRotation', v)}
                     min={0}
-                    max={5}
+                    baseMax={5}
                     step={0.1}
+                    formatValue={(v) => v.toFixed(1)}
                   />
-                </div>
 
-                {/* Parallax */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Parallax</span>
-                    <span className="text-muted-foreground tabular-nums">
-                      {settings.parallaxMultiplier.toFixed(1)}
-                    </span>
-                  </div>
-                  <Slider
-                    value={[settings.parallaxMultiplier]}
-                    onValueChange={([value]) => updateSetting('parallaxMultiplier', value)}
+                  <SliderWithMultipliers
+                    key={`parallaxMultiplier-${resetKey}`}
+                    label="Parallax"
+                    value={settings.parallaxMultiplier}
+                    onChange={(v) => updateSetting('parallaxMultiplier', v)}
                     min={0}
-                    max={10}
+                    baseMax={10}
                     step={0.5}
+                    formatValue={(v) => v.toFixed(1)}
                   />
                 </div>
               </div>
-            </div>
+            </CollapsibleSection>
 
             {/* Reset Button */}
             <div className="pt-2">
               <Button
                 variant="outline"
-                onClick={resetToDefaults}
+                onClick={handleReset}
                 className="w-full"
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
