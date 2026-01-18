@@ -22,7 +22,7 @@ function App() {
       <SettingsPanel />
 
       <main className="flex-1 flex items-center justify-center px-4">
-        <div className="relative max-w-xl w-full">
+        <div className="relative max-w-lg w-full">
           <DecorativeSquares mousePos={mousePos} />
           <ChecksumForm />
         </div>

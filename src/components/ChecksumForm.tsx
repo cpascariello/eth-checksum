@@ -85,8 +85,8 @@ export function ChecksumForm() {
         {checksummed && (
           <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
             <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <p className="font-mono text-sm break-all flex-1 text-green-600 dark:text-green-300">
+              <div className="flex items-center justify-center gap-3">
+                <p className="font-mono text-sm text-green-600 dark:text-green-300">
                   {checksummed}
                 </p>
                 <Button
