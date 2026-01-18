@@ -2,6 +2,7 @@ import { Settings, X } from 'lucide-react';
 import { useSettingsStore } from '@/store/settings';
 import { ColorPicker } from './ColorPicker';
 import { ThemeToggle } from './ThemeToggle';
+import { WalletButton } from './WalletButton';
 import { Button } from '@/components/ui/button';
 
 export function SettingsPanel() {
@@ -49,6 +50,12 @@ export function SettingsPanel() {
           <h2 className="pt-8 text-lg font-semibold">Settings</h2>
 
           <div className="mt-6 space-y-6">
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                Wallet
+              </h3>
+              <WalletButton />
+            </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-3">
                 Square Color
