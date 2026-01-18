@@ -20,8 +20,8 @@ export function SettingsPanel() {
       )}
 
       <div
-        className={`fixed top-0 right-0 h-full z-50 transition-transform duration-300 ease-in-out ${
-          isSettingsPanelOpen ? 'translate-x-0' : 'translate-x-[400px]'
+        className={`fixed top-0 right-0 h-full w-[416px] z-50 transition-transform duration-300 ease-in-out ${
+          isSettingsPanelOpen ? 'translate-x-0' : 'translate-x-[416px]'
         }`}
       >
         {/* Toggle Button - positioned to the left of the panel */}
@@ -29,7 +29,7 @@ export function SettingsPanel() {
           variant="ghost"
           size="icon"
           onClick={toggleSettingsPanel}
-          className="absolute top-5 -left-[60px] bg-background border border-border shadow-sm"
+          className="absolute top-5 -left-[45px] bg-background border border-border shadow-sm"
           aria-label={isSettingsPanelOpen ? 'Close settings' : 'Open settings'}
           aria-expanded={isSettingsPanelOpen}
         >
@@ -41,7 +41,7 @@ export function SettingsPanel() {
         </Button>
 
         {/* Panel */}
-        <div className="h-full w-[400px] bg-background border-l border-border shadow-lg p-6">
+        <div className="absolute top-4 bottom-4 right-4 w-[400px] rounded-md bg-background border border-border shadow-lg p-6">
           {/* Theme Toggle - top right of panel */}
           <div className="absolute top-4 right-4">
             <ThemeToggle />
