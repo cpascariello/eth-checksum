@@ -34,7 +34,7 @@ function SliderWithMultipliers({
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center text-sm">
-        <span className="font-medium">{label}</span>
+        <span className="font-thin">{label}</span>
         <span className="text-muted-foreground tabular-nums">
           {formatValue(value)}
         </span>
@@ -46,7 +46,7 @@ function SliderWithMultipliers({
             onClick={() => setMultiplier(mult)}
             className={`px-2 py-0.5 text-xs rounded border transition-colors ${
               multiplier === mult
-                ? 'border-primary bg-primary text-primary-foreground'
+                ? 'border-neutral-600 bg-accent text-accent-foreground'
                 : 'border-border bg-background hover:bg-accent hover:text-accent-foreground'
             }`}
           >
@@ -130,7 +130,7 @@ export function SettingsPanel() {
 
       <div
         className={`fixed top-0 right-0 h-full w-[496px] z-50 transition-transform duration-300 ease-in-out ${
-          isSettingsPanelOpen ? 'translate-x-0' : 'translate-x-[496px]'
+          isSettingsPanelOpen ? 'translate-x-0' : 'translate-x-[486px]'
         }`}
       >
         {/* Toggle Button - positioned to the left of the panel */}
