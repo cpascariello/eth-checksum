@@ -11,6 +11,12 @@ export const TAILWIND_COLOR_STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800,
 export type TailwindColorFamily = typeof TAILWIND_COLOR_FAMILIES[number];
 export type TailwindColorStep = typeof TAILWIND_COLOR_STEPS[number];
 
+// Per-square color for randomization
+export interface SquareColor {
+  family: TailwindColorFamily;
+  step: TailwindColorStep;
+}
+
 // All Tailwind color hex values
 export const TAILWIND_COLORS: Record<TailwindColorFamily, Record<TailwindColorStep, string>> = {
   slate: {
@@ -112,6 +118,7 @@ export const DEFAULT_SETTINGS = {
   parallaxMultiplier: 2,
   squareColorFamily: 'neutral' as TailwindColorFamily,
   squareColorStep: 400 as TailwindColorStep,
+  randomColors: [] as SquareColor[],
 } as const;
 
 export interface Settings {
@@ -122,6 +129,7 @@ export interface Settings {
   parallaxMultiplier: number;
   squareColorFamily: TailwindColorFamily;
   squareColorStep: TailwindColorStep;
+  randomColors: SquareColor[];
 }
 
 export interface Profile {

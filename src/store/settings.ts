@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Settings, TailwindColorFamily, TailwindColorStep } from '../types';
-import { DEFAULT_SETTINGS, TAILWIND_COLOR_FAMILIES } from '../types';
+import type { Settings, TailwindColorFamily, TailwindColorStep, SquareColor } from '../types';
+import { DEFAULT_SETTINGS, TAILWIND_COLOR_FAMILIES, TAILWIND_COLOR_STEPS } from '../types';
 
 function getInitialTheme(): boolean {
   if (typeof window === 'undefined') return false;
@@ -15,6 +15,8 @@ interface SettingsState {
   settings: Settings;
   updateSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
   resetToDefaults: () => void;
+  randomizeColors: () => void;
+  randomizeSingleColor: () => void;
 
   // Theme (separate from settings for now, can be merged into settings later)
   isDark: boolean;
@@ -24,6 +26,13 @@ interface SettingsState {
   // Settings Panel (not persisted)
   isSettingsPanelOpen: boolean;
   toggleSettingsPanel: () => void;
+}
+
+// Helper to generate a random color
+function getRandomColor(): SquareColor {
+  const family = TAILWIND_COLOR_FAMILIES[Math.floor(Math.random() * TAILWIND_COLOR_FAMILIES.length)];
+  const step = TAILWIND_COLOR_STEPS[Math.floor(Math.random() * TAILWIND_COLOR_STEPS.length)];
+  return { family, step };
 }
 
 // Old settings interface for migration
@@ -48,6 +57,7 @@ function migrateSettings(oldSettings: OldSettings): Settings {
     parallaxMultiplier: oldSettings.parallaxMultiplier ?? DEFAULT_SETTINGS.parallaxMultiplier,
     squareColorFamily: DEFAULT_SETTINGS.squareColorFamily,
     squareColorStep: DEFAULT_SETTINGS.squareColorStep,
+    randomColors: [],
   };
 
   // If already migrated, use existing values
@@ -75,12 +85,38 @@ export const useSettingsStore = create<SettingsState>()(
       settings: { ...DEFAULT_SETTINGS },
 
       updateSetting: (key, value) =>
-        set((state) => ({
-          settings: { ...state.settings, [key]: value },
-        })),
+        set((state) => {
+          const newSettings = { ...state.settings, [key]: value };
+          // Clear randomColors when manually setting color family or step
+          if (key === 'squareColorFamily' || key === 'squareColorStep') {
+            newSettings.randomColors = [];
+          }
+          return { settings: newSettings };
+        }),
 
       resetToDefaults: () =>
-        set({ settings: { ...DEFAULT_SETTINGS } }),
+        set({ settings: { ...DEFAULT_SETTINGS, randomColors: [] } }),
+
+      randomizeColors: () =>
+        set((state) => ({
+          settings: {
+            ...state.settings,
+            randomColors: Array.from({ length: state.settings.squareCount }, () => getRandomColor()),
+          },
+        })),
+
+      randomizeSingleColor: () =>
+        set((state) => {
+          const color = getRandomColor();
+          return {
+            settings: {
+              ...state.settings,
+              squareColorFamily: color.family,
+              squareColorStep: color.step,
+              randomColors: [],
+            },
+          };
+        }),
 
       isDark: getInitialTheme(),
 
@@ -104,23 +140,38 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'eth-checksum-settings',
-      version: 1,
+      version: 2,
       partialize: (state) => ({
         settings: state.settings,
         // isDark is handled separately via localStorage for backwards compatibility
       }),
       migrate: (persistedState: unknown, version: number) => {
+        let state = persistedState as { settings?: OldSettings & { randomColors?: SquareColor[] } };
+
         if (version === 0) {
           // Version 0: old format with squareColor
-          const state = persistedState as { settings?: OldSettings };
           if (state.settings) {
-            return {
+            state = {
               ...state,
               settings: migrateSettings(state.settings),
             };
           }
         }
-        return persistedState as { settings: Settings };
+
+        if (version < 2) {
+          // Version 1 -> 2: add randomColors array
+          if (state.settings) {
+            state = {
+              ...state,
+              settings: {
+                ...state.settings,
+                randomColors: state.settings.randomColors ?? [],
+              } as Settings,
+            };
+          }
+        }
+
+        return state as { settings: Settings };
       },
     }
   )

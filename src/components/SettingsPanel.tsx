@@ -77,7 +77,7 @@ function CollapsibleSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-border rounded-md">
+    <div className="border border-border rounded-md bg-muted/15">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between text-base font-semibold w-full text-left p-4"
@@ -157,7 +157,7 @@ export function SettingsPanel() {
             <ThemeToggle />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-4">
             {/* Square Color section */}
             <CollapsibleSection title="Square Color">
               <ColorDropdowns />

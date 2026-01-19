@@ -7,9 +7,17 @@ interface DecorativeSquaresProps {
 
 export function DecorativeSquares({ mousePos }: DecorativeSquaresProps) {
   const { settings } = useSettingsStore();
-  const { squareCount, squareStep, squareStepIncrement, squareRotation, parallaxMultiplier, squareColorFamily, squareColorStep } = settings;
+  const { squareCount, squareStep, squareStepIncrement, squareRotation, parallaxMultiplier, squareColorFamily, squareColorStep, randomColors } = settings;
 
-  const borderColor = TAILWIND_COLORS[squareColorFamily][squareColorStep];
+  const defaultColor = TAILWIND_COLORS[squareColorFamily][squareColorStep];
+
+  const getColorForSquare = (index: number): string => {
+    if (randomColors[index]) {
+      const { family, step } = randomColors[index];
+      return TAILWIND_COLORS[family][step];
+    }
+    return defaultColor;
+  };
 
   return (
     <>
@@ -21,7 +29,7 @@ export function DecorativeSquares({ mousePos }: DecorativeSquaresProps) {
             inset: `-${(i + 1) * squareStep + squareStepIncrement * ((i + 1) * i) / 2}px`,
             opacity: 1 - (i + 1) / (squareCount + 1),
             transform: `rotate(${mousePos.x * squareRotation * (i + 1)}deg) translate(${mousePos.x * i * parallaxMultiplier}px, ${mousePos.y * i * parallaxMultiplier}px)`,
-            borderColor,
+            borderColor: getColorForSquare(i),
           }}
         />
       ))}

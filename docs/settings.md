@@ -17,6 +17,12 @@ interface Settings {
   parallaxMultiplier: number;    // Mouse parallax multiplier
   squareColorFamily: TailwindColorFamily;  // e.g., 'neutral', 'blue'
   squareColorStep: TailwindColorStep;      // e.g., 400, 500
+  randomColors: SquareColor[];   // Per-square colors (empty = use single color)
+}
+
+interface SquareColor {
+  family: TailwindColorFamily;
+  step: TailwindColorStep;
 }
 ```
 
@@ -85,6 +91,8 @@ const {
   settings,                    // Current settings object
   updateSetting(key, value),   // Update single setting
   resetToDefaults(),           // Reset all to defaults
+  randomizeColors(),           // Assign random color to each square
+  randomizeSingleColor(),      // Pick one random color for all squares
 
   // Theme
   isDark,                      // Current theme

@@ -13,23 +13,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Dices, Shuffle } from 'lucide-react';
 
 function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export function ColorDropdowns() {
-  const { settings, updateSetting } = useSettingsStore();
-  const { squareColorFamily, squareColorStep } = settings;
+  const { settings, updateSetting, randomizeColors, randomizeSingleColor } = useSettingsStore();
+  const { squareColorFamily, squareColorStep, randomColors } = settings;
 
   const selectedHex = TAILWIND_COLORS[squareColorFamily][squareColorStep];
+  const hasRandomColors = randomColors.length > 0;
 
   return (
     <div className="space-y-4">
-      <div
-        className="h-8 rounded border border-border"
-        style={{ backgroundColor: selectedHex }}
-      />
+      {hasRandomColors ? (
+        <div className="h-8 rounded border border-border overflow-hidden flex">
+          {randomColors.slice(0, 20).map((color, i) => (
+            <div
+              key={i}
+              className="flex-1 h-full"
+              style={{ backgroundColor: TAILWIND_COLORS[color.family][color.step] }}
+            />
+          ))}
+        </div>
+      ) : (
+        <div
+          className="h-8 rounded border border-border"
+          style={{ backgroundColor: selectedHex }}
+        />
+      )}
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
@@ -81,6 +96,29 @@ export function ColorDropdowns() {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="border-t border-border my-6" />
+
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1"
+          onClick={randomizeSingleColor}
+        >
+          <Dices className="w-4 h-4 mr-2" />
+          Random Color
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1"
+          onClick={randomizeColors}
+        >
+          <Shuffle className="w-4 h-4 mr-2" />
+          Randomize Each
+        </Button>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@
 | `ChecksumForm` | `src/components/ChecksumForm.tsx` | Address input/conversion |
 | `SettingsPanel` | `src/components/SettingsPanel.tsx` | Sliding settings drawer |
 | `DecorativeSquares` | `src/components/DecorativeSquares.tsx` | Animated border squares |
-| `ColorDropdowns` | `src/components/ColorDropdowns.tsx` | Tailwind color picker |
+| `ColorDropdowns` | `src/components/ColorDropdowns.tsx` | Tailwind color picker + randomize buttons |
 | `ThemeToggle` | `src/components/ThemeToggle.tsx` | Light/dark mode toggle |
 | `WalletButton` | `src/components/WalletButton.tsx` | Wallet connect button |
 
@@ -58,6 +58,8 @@ Layout:
 │ ▼ Square Color              │  <- CollapsibleSection
 │   [Preview]                 │
 │   [Family ▼] [Shade ▼]      │
+│   ─────────────────────     │
+│   [Random Color] [Randomize]│  <- Randomize buttons
 ├─────────────────────────────┤
 │ ▼ Square Settings           │  <- CollapsibleSection
 │   [Sliders...]              │
@@ -72,8 +74,9 @@ Renders `squareCount` nested border squares with:
 - Progressive opacity fade
 - Mouse-based rotation and parallax
 - Color from Tailwind palette (same in light/dark mode)
+- Per-square color support via `randomColors` array
 
-All parameters come from Zustand settings store.
+All parameters come from Zustand settings store. When `randomColors` has entries, each square uses its corresponding color; otherwise falls back to the single color setting.
 
 ## Adding a New Component
 
