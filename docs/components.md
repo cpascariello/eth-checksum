@@ -78,6 +78,36 @@ Renders `squareCount` nested border squares with:
 
 All parameters come from Zustand settings store. When `randomColors` has entries, each square uses its corresponding color; otherwise falls back to the single color setting.
 
+## Hooks
+
+| Hook | Location | Purpose |
+|------|----------|---------|
+| `useAlephLogin` | `src/hooks/useAlephLogin.ts` | Tracks first-time wallet connections via Aleph Cloud |
+
+### useAlephLogin
+
+Integrates with Aleph Cloud to track first-time wallet connections without a backend.
+
+**Flow:**
+1. User connects wallet via WalletConnect/wagmi
+2. Hook checks Aleph for existing login aggregate (free, no signature)
+3. If no aggregate exists, shows toast prompting user to sign
+4. On signature, creates aggregate on Aleph network
+5. Future connections skip signature (aggregate already exists)
+
+**Usage:**
+```tsx
+// In App.tsx - just call the hook at top level
+import { useAlephLogin } from '@/hooks/useAlephLogin';
+
+function App() {
+  useAlephLogin(); // Handles everything automatically
+  // ...
+}
+```
+
+See [docs/aleph.md](aleph.md) for full Aleph integration details.
+
 ## Adding a New Component
 
 1. Create file in `src/components/`

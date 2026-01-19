@@ -11,8 +11,10 @@ src/
 ├── components/          # React components
 │   ├── ui/              # Reusable UI primitives (shadcn-style)
 │   └── *.tsx            # Feature components
-├── config/              # Configuration (wagmi, etc.)
+├── config/              # Configuration (wagmi, Aleph)
+├── hooks/               # Custom React hooks
 ├── lib/                 # Utilities (cn helper)
+├── services/            # External service integrations (Aleph)
 ├── store/               # Zustand stores
 ├── types/               # TypeScript types and constants
 ├── App.tsx              # Main app component
@@ -32,15 +34,21 @@ src/
 | Radix UI | Headless UI primitives |
 | ethers.js | Ethereum utilities |
 | @reown/appkit + wagmi | Wallet connection |
+| @aleph-sdk/* | Decentralized storage (login tracking) |
 
 ## Data Flow
 
 ```
 main.tsx (providers: Wagmi, QueryClient)
-    └── App.tsx (mouse tracking state)
+    └── App.tsx (mouse tracking state, useAlephLogin hook)
             ├── SettingsPanel (reads/writes Zustand store)
             ├── DecorativeSquares (reads store + mouse position)
             └── ChecksumForm (ethers.js for conversion)
+
+Aleph Login Flow:
+    Wallet Connect → useAlephLogin hook
+        → checkLoginAggregate (read from Aleph network)
+        → if new user: toast prompt → createLoginAggregate (write to Aleph)
 ```
 
 ## State Management
