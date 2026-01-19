@@ -3,11 +3,11 @@ import { Toaster } from 'sonner';
 import { DecorativeSquares } from '@/components/DecorativeSquares';
 import { ChecksumForm } from '@/components/ChecksumForm';
 import { SettingsPanel } from '@/components/SettingsPanel';
-import { useAlephLogin } from '@/hooks/useAlephLogin';
+import { useAlephProfile } from '@/hooks/useAlephProfile';
 
 function App() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  useAlephLogin();
+  useAlephProfile();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {

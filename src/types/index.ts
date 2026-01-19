@@ -138,3 +138,23 @@ export interface Profile {
   settings: Settings;
   createdAt: number;
 }
+
+/**
+ * Profile data stored on Aleph Cloud.
+ * This is the aggregate structure for cloud-synced settings.
+ */
+export interface ProfileData {
+  version: 1;
+  updatedAt: number;  // Unix timestamp
+  settings: {
+    squareCount: number;
+    squareStep: number;
+    squareStepIncrement: number;
+    squareRotation: number;
+    parallaxMultiplier: number;
+    squareColorFamily: TailwindColorFamily;
+    squareColorStep: TailwindColorStep;
+    randomColors: SquareColor[];
+  };
+  isDark: boolean;
+}

@@ -17,11 +17,11 @@
 export const ALEPH_CHANNEL = 'ETH_CHECKSUM';
 
 /**
- * The key used to store login aggregates.
+ * The key used to store profile aggregates.
  * Each wallet address can have multiple aggregates with different keys.
- * We use 'login' to track whether a user has signed in before.
+ * We use 'eth_checksum_profile' to store user settings on the cloud.
  */
-export const ALEPH_AGGREGATE_KEY = 'login';
+export const ALEPH_AGGREGATE_KEY = 'eth_checksum_profile';
 
 /**
  * Ethereum Mainnet chain ID in hex format.

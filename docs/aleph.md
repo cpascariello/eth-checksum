@@ -2,7 +2,7 @@
 
 ## Overview
 
-[Aleph Cloud](https://aleph.cloud/) is a decentralized storage and compute network. We use it to track first-time wallet connections without requiring a centralized backend.
+[Aleph Cloud](https://aleph.cloud/) is a decentralized storage and compute network. We use it to store user settings (profiles) without requiring a centralized backend.
 
 **Why Aleph?**
 - No backend required - data lives on the decentralized network
@@ -14,9 +14,9 @@
 
 ```
 src/
-├── config/aleph.ts          # Constants (channel, keys, chain ID)
-├── services/aleph.ts        # Aleph SDK integration
-└── hooks/useAlephLogin.ts   # React hook for login flow
+├── config/aleph.ts           # Constants (channel, keys, chain ID)
+├── services/aleph.ts         # Aleph SDK integration
+└── hooks/useAlephProfile.ts  # React hook for profile management
 ```
 
 ### config/aleph.ts
@@ -26,41 +26,97 @@ Configuration constants:
 | Constant | Value | Purpose |
 |----------|-------|---------|
 | `ALEPH_CHANNEL` | `'ETH_CHECKSUM'` | Namespace for our app's data |
-| `ALEPH_AGGREGATE_KEY` | `'login'` | Key for login aggregates |
+| `ALEPH_AGGREGATE_KEY` | `'eth_checksum_profile'` | Key for profile aggregates |
 | `ETH_MAINNET_CHAIN_ID` | `'0x1'` | Required chain for signing |
 
 ### services/aleph.ts
 
 Two main functions:
 
-- `checkLoginAggregate(address)` - Read operation, checks if user has signed before
-- `createLoginAggregate(provider)` - Write operation, stores login record (requires signature)
+- `fetchProfile(address)` - Read operation, returns `ProfileData` if exists
+- `saveProfile(provider, settings, isDark)` - Write operation, stores profile (requires signature)
 
-### hooks/useAlephLogin.ts
+### hooks/useAlephProfile.ts
 
-React hook that orchestrates the login flow. Call it once in App.tsx.
+React hook that manages profile loading and saving:
 
-## Integration Flow
+```ts
+const { isSaving, isLoading, hasProfile, saveToCloud } = useAlephProfile();
+```
+
+- `isSaving` - True while saving to cloud
+- `isLoading` - True while checking for profile on connect
+- `hasProfile` - True if user has a cloud profile
+- `saveToCloud()` - Function to save current settings
+
+## Profile Data Structure
+
+```typescript
+interface ProfileData {
+  version: 1;
+  updatedAt: number;  // Unix timestamp
+  settings: {
+    squareCount: number;
+    squareStep: number;
+    squareStepIncrement: number;
+    squareRotation: number;
+    parallaxMultiplier: number;
+    squareColorFamily: TailwindColorFamily;
+    squareColorStep: TailwindColorStep;
+    randomColors: SquareColor[];
+  };
+  isDark: boolean;
+}
+```
+
+## User Flows
+
+### First-time User
 
 ```
 1. User connects wallet
         ↓
-2. useAlephLogin detects connection
+2. useAlephProfile detects connection
         ↓
-3. checkLoginAggregate(address) ← Free read operation
+3. fetchProfile(address) ← Free read operation
         ↓
-4. If aggregate exists → Done (returning user)
-   If not exists → Continue
+4. Profile not found
         ↓
-5. Show toast: "Welcome! Please sign..."
+5. Show toast: "Save your settings to Aleph Cloud?"
         ↓
-6. User clicks "Sign"
+6. User clicks "Save"
         ↓
-7. createLoginAggregate(provider) ← Triggers wallet popup
+7. saveProfile() ← Triggers wallet popup
         ↓
-8. Aggregate stored on Aleph network
+8. Profile stored on Aleph network
         ↓
-9. Future visits skip steps 5-8
+9. Toast: "Settings saved to Aleph Cloud!"
+```
+
+### Returning User
+
+```
+1. User connects wallet
+        ↓
+2. fetchProfile(address) ← Free read operation
+        ↓
+3. Profile found
+        ↓
+4. applyProfileSettings() ← Load into store
+        ↓
+5. Toast: "Settings loaded from Aleph Cloud!"
+```
+
+### Manual Save
+
+```
+1. User clicks "Save to Cloud" button (in SettingsPanel)
+        ↓
+2. saveProfile() ← Triggers wallet popup
+        ↓
+3. Profile overwritten on Aleph network
+        ↓
+4. Toast: "Settings saved to Aleph Cloud!"
 ```
 
 ## SDK Packages
@@ -87,43 +143,13 @@ Then import from `ethers5`:
 import { providers } from 'ethers5';
 ```
 
-## Adding More Aggregates
+## Error Handling
 
-To store additional data (e.g., user preferences):
+The hook handles several error cases:
 
-1. **Add a new key in config/aleph.ts:**
-   ```ts
-   export const ALEPH_PREFERENCES_KEY = 'preferences';
-   ```
-
-2. **Add service functions in services/aleph.ts:**
-   ```ts
-   export async function getPreferences(address: string) {
-     const client = new AlephHttpClient();
-     try {
-       return await client.fetchAggregate(address, ALEPH_PREFERENCES_KEY);
-     } catch {
-       return null;
-     }
-   }
-
-   export async function savePreferences(provider: Provider, data: object) {
-     // Similar to createLoginAggregate but with different key/content
-     // ...
-     await client.createAggregate({
-       key: ALEPH_PREFERENCES_KEY,
-       content: data,
-       channel: ALEPH_CHANNEL,
-     });
-   }
-   ```
-
-3. **Create a hook if needed:**
-   ```ts
-   export function useAlephPreferences() {
-     // Similar pattern to useAlephLogin
-   }
-   ```
+- **Wrong chain**: Shows "Please switch to Ethereum mainnet to save."
+- **Rejected signature**: Shows "Signature rejected."
+- **Other errors**: Shows "Failed to save settings."
 
 ## Resources
 

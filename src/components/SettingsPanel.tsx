@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Settings, X, RotateCcw, ChevronDown, Github } from 'lucide-react';
+import { Settings, X, RotateCcw, ChevronDown, Github, Cloud, Loader2 } from 'lucide-react';
+import { useAccount } from 'wagmi';
+import { useAlephProfile } from '@/hooks/useAlephProfile';
 import { useSettingsStore } from '@/store/settings';
 import { ColorDropdowns } from './ColorDropdowns';
 import { ThemeToggle } from './ThemeToggle';
@@ -111,6 +113,8 @@ export function SettingsPanel() {
     resetToDefaults,
   } = useSettingsStore();
   const [resetKey, setResetKey] = useState(0);
+  const { isConnected } = useAccount();
+  const { isSaving, saveToCloud } = useAlephProfile();
 
   const handleReset = () => {
     resetToDefaults();
@@ -239,6 +243,25 @@ export function SettingsPanel() {
                 Reset to Defaults
               </Button>
             </div>
+
+            {/* Save to Cloud Button - only visible when wallet connected */}
+            {isConnected && (
+              <div className="pt-2">
+                <Button
+                  variant="outline"
+                  onClick={saveToCloud}
+                  disabled={isSaving}
+                  className="w-full"
+                >
+                  {isSaving ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Cloud className="h-4 w-4 mr-2" />
+                  )}
+                  {isSaving ? 'Saving...' : 'Save to Cloud'}
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* GitHub Link */}

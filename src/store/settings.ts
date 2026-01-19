@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Settings, TailwindColorFamily, TailwindColorStep, SquareColor } from '../types';
+import type { Settings, TailwindColorFamily, TailwindColorStep, SquareColor, ProfileData } from '../types';
 import { DEFAULT_SETTINGS, TAILWIND_COLOR_FAMILIES, TAILWIND_COLOR_STEPS } from '../types';
 
 function getInitialTheme(): boolean {
@@ -17,6 +17,7 @@ interface SettingsState {
   resetToDefaults: () => void;
   randomizeColors: () => void;
   randomizeSingleColor: () => void;
+  applyProfileSettings: (profile: ProfileData) => void;
 
   // Theme (separate from settings for now, can be merged into settings later)
   isDark: boolean;
@@ -117,6 +118,28 @@ export const useSettingsStore = create<SettingsState>()(
             },
           };
         }),
+
+      applyProfileSettings: (profile: ProfileData) => {
+        // Apply theme
+        const isDark = profile.isDark;
+        document.documentElement.classList.toggle('dark', isDark);
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+        // Apply settings
+        set({
+          isDark,
+          settings: {
+            squareCount: profile.settings.squareCount,
+            squareStep: profile.settings.squareStep,
+            squareStepIncrement: profile.settings.squareStepIncrement,
+            squareRotation: profile.settings.squareRotation,
+            parallaxMultiplier: profile.settings.parallaxMultiplier,
+            squareColorFamily: profile.settings.squareColorFamily,
+            squareColorStep: profile.settings.squareColorStep,
+            randomColors: profile.settings.randomColors || [],
+          },
+        });
+      },
 
       isDark: getInitialTheme(),
 

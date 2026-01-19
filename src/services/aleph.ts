@@ -2,8 +2,8 @@
  * Aleph Cloud Service
  *
  * This module handles communication with Aleph Cloud's decentralized network.
- * We use Aleph "aggregates" to store login records - essentially key-value pairs
- * that are associated with a wallet address and persisted on the network.
+ * We use Aleph "aggregates" to store user profile data (settings) - essentially
+ * key-value pairs that are associated with a wallet address and persisted on the network.
  *
  * Aggregates are ideal for this use case because:
  * - No backend required - data lives on the decentralized network
@@ -29,6 +29,7 @@ import { JsonRPCWallet } from '@aleph-sdk/evm';
 import { providers } from 'ethers5';
 
 import { ALEPH_CHANNEL, ALEPH_AGGREGATE_KEY, ETH_MAINNET_CHAIN_ID } from '../config/aleph';
+import type { ProfileData, Settings } from '../types';
 
 /**
  * Custom error thrown when user is on the wrong chain.
@@ -43,29 +44,33 @@ export class WrongChainError extends Error {
 }
 
 /**
- * Check if a login aggregate exists for the given address.
+ * Fetch profile data for the given address.
  *
  * This is a READ operation - it doesn't require a wallet signature.
  * We use the unauthenticated AlephHttpClient since we're just fetching data.
  *
- * @param address - The wallet address to check
- * @returns true if the user has previously signed, false otherwise
+ * @param address - The wallet address to fetch profile for
+ * @returns ProfileData if exists, null otherwise
  */
-export async function checkLoginAggregate(address: string): Promise<boolean> {
+export async function fetchProfile(address: string): Promise<ProfileData | null> {
   // Unauthenticated client - read operations are free and don't need signing
   const client = new AlephHttpClient();
   try {
     // fetchAggregate retrieves the stored key-value data for this address
     const data = await client.fetchAggregate(address, ALEPH_AGGREGATE_KEY);
-    return data !== null && data !== undefined;
+    // Validate that it's a valid profile (has version field)
+    if (data && typeof data === 'object' && 'version' in data) {
+      return data as ProfileData;
+    }
+    return null;
   } catch {
     // If aggregate doesn't exist, Aleph throws an error - treat as "not found"
-    return false;
+    return null;
   }
 }
 
 /**
- * Create a login aggregate for the connected wallet using Aleph SDK.
+ * Save profile data for the connected wallet using Aleph SDK.
  *
  * This is a WRITE operation - requires the user to sign a message with their wallet.
  * The flow is:
@@ -75,10 +80,14 @@ export async function checkLoginAggregate(address: string): Promise<boolean> {
  * 4. Store the aggregate (this triggers the wallet signature popup)
  *
  * @param provider - The wallet provider from wagmi/WalletConnect
- * @returns true if aggregate was created successfully
+ * @param settings - The settings to save
+ * @param isDark - Whether dark mode is enabled
+ * @returns true if profile was saved successfully
  */
-export async function createLoginAggregate(
-  provider: { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> }
+export async function saveProfile(
+  provider: { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> },
+  settings: Settings,
+  isDark: boolean
 ): Promise<boolean> {
   // Step 1: Chain validation - must be on mainnet for Aleph signatures
   const currentChainId = await provider.request({ method: 'eth_chainId' }) as string;
@@ -107,12 +116,29 @@ export async function createLoginAggregate(
   // Unlike AlephHttpClient, this can sign and write data to the network
   const client = new AuthenticatedAlephHttpClient(account);
 
-  // Step 6: Create the aggregate
+  // Step 6: Create the profile data
+  const profileData: ProfileData = {
+    version: 1,
+    updatedAt: Date.now(),
+    settings: {
+      squareCount: settings.squareCount,
+      squareStep: settings.squareStep,
+      squareStepIncrement: settings.squareStepIncrement,
+      squareRotation: settings.squareRotation,
+      parallaxMultiplier: settings.parallaxMultiplier,
+      squareColorFamily: settings.squareColorFamily,
+      squareColorStep: settings.squareColorStep,
+      randomColors: settings.randomColors,
+    },
+    isDark,
+  };
+
+  // Step 7: Create the aggregate
   // This will prompt the user to sign a message in their wallet
   // The signed message proves ownership and is stored on the Aleph network
   await client.createAggregate({
     key: ALEPH_AGGREGATE_KEY,    // Unique key for this type of data
-    content: { login: 1 },       // The actual data to store (can be any JSON)
+    content: profileData,        // The actual data to store
     channel: ALEPH_CHANNEL,      // Groups our app's data together
   });
 
