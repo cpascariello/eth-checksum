@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Settings } from '../types';
-import { DEFAULT_SETTINGS } from '../types';
+import type { Settings, TailwindColorFamily, TailwindColorStep } from '../types';
+import { DEFAULT_SETTINGS, TAILWIND_COLOR_FAMILIES } from '../types';
 
 function getInitialTheme(): boolean {
   if (typeof window === 'undefined') return false;
@@ -24,6 +24,49 @@ interface SettingsState {
   // Settings Panel (not persisted)
   isSettingsPanelOpen: boolean;
   toggleSettingsPanel: () => void;
+}
+
+// Old settings interface for migration
+interface OldSettings {
+  squareCount?: number;
+  squareStep?: number;
+  squareStepIncrement?: number;
+  squareRotation?: number;
+  parallaxMultiplier?: number;
+  squareColor?: string;
+  squareColorFamily?: TailwindColorFamily;
+  squareColorStep?: TailwindColorStep;
+}
+
+// Migration function to convert old squareColor to new format
+function migrateSettings(oldSettings: OldSettings): Settings {
+  const settings: Settings = {
+    squareCount: oldSettings.squareCount ?? DEFAULT_SETTINGS.squareCount,
+    squareStep: oldSettings.squareStep ?? DEFAULT_SETTINGS.squareStep,
+    squareStepIncrement: oldSettings.squareStepIncrement ?? DEFAULT_SETTINGS.squareStepIncrement,
+    squareRotation: oldSettings.squareRotation ?? DEFAULT_SETTINGS.squareRotation,
+    parallaxMultiplier: oldSettings.parallaxMultiplier ?? DEFAULT_SETTINGS.parallaxMultiplier,
+    squareColorFamily: DEFAULT_SETTINGS.squareColorFamily,
+    squareColorStep: DEFAULT_SETTINGS.squareColorStep,
+  };
+
+  // If already migrated, use existing values
+  if (oldSettings.squareColorFamily && oldSettings.squareColorStep !== undefined) {
+    settings.squareColorFamily = oldSettings.squareColorFamily;
+    settings.squareColorStep = oldSettings.squareColorStep;
+  }
+  // Migrate from old squareColor format
+  else if (oldSettings.squareColor) {
+    const oldColor = oldSettings.squareColor;
+    // Check if the old color exists in Tailwind families
+    if (TAILWIND_COLOR_FAMILIES.includes(oldColor as TailwindColorFamily)) {
+      settings.squareColorFamily = oldColor as TailwindColorFamily;
+    }
+    // Default step for migrated colors
+    settings.squareColorStep = 400;
+  }
+
+  return settings;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -61,10 +104,24 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'eth-checksum-settings',
+      version: 1,
       partialize: (state) => ({
         settings: state.settings,
         // isDark is handled separately via localStorage for backwards compatibility
       }),
+      migrate: (persistedState: unknown, version: number) => {
+        if (version === 0) {
+          // Version 0: old format with squareColor
+          const state = persistedState as { settings?: OldSettings };
+          if (state.settings) {
+            return {
+              ...state,
+              settings: migrateSettings(state.settings),
+            };
+          }
+        }
+        return persistedState as { settings: Settings };
+      },
     }
   )
 );

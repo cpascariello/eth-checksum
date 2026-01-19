@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Settings, X, RotateCcw, ChevronDown } from 'lucide-react';
 import { useSettingsStore } from '@/store/settings';
-import { ColorPicker } from './ColorPicker';
+import { ColorDropdowns } from './ColorDropdowns';
 import { ThemeToggle } from './ThemeToggle';
 import { WalletButton } from './WalletButton';
 import { Button } from '@/components/ui/button';
@@ -160,7 +160,7 @@ export function SettingsPanel() {
           <div className="space-y-2">
             {/* Square Color section */}
             <CollapsibleSection title="Square Color">
-              <ColorPicker />
+              <ColorDropdowns />
             </CollapsibleSection>
 
             {/* Square Settings section */}
