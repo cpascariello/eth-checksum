@@ -6,6 +6,7 @@ An Ethereum address checksum converter built with React 19, TypeScript, Vite, an
 
 - Convert Ethereum addresses to EIP-55 checksummed format
 - WalletConnect integration for connecting wallets
+- Decentralized login tracking via Aleph Cloud
 - Dark/light theme toggle with system preference detection
 - Customizable decorative squares with parallax effects
 
@@ -59,3 +60,14 @@ npm run preview
 - **UI Components**: shadcn/ui
 - **State Management**: Zustand
 - **Ethereum**: ethers.js, wagmi, @reown/appkit
+- **Decentralized Storage**: Aleph SDK
+
+## Aleph Integration
+
+This app uses Aleph Cloud for decentralized login tracking. The implementation is thoroughly documented with inline comments—these source files are the primary learning resource:
+
+- [`src/config/aleph.ts`](src/config/aleph.ts) - Configuration and constants
+- [`src/services/aleph.ts`](src/services/aleph.ts) - SDK integration
+- [`src/hooks/useAlephLogin.ts`](src/hooks/useAlephLogin.ts) - React hook with flow documentation
+
+See also: [`docs/aleph.md`](docs/aleph.md) for architecture overview.
