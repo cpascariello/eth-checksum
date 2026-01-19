@@ -8,6 +8,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Redirect ethers to ethers5 for Aleph SDK compatibility
+      "ethers": path.resolve(__dirname, "./node_modules/ethers5"),
     },
+  },
+  optimizeDeps: {
+    include: ['ethers5'],
   },
 })
