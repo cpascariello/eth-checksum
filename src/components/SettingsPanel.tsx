@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Settings, X, RotateCcw, ChevronDown } from 'lucide-react';
+import { Settings, X, RotateCcw, ChevronDown, Github } from 'lucide-react';
 import { useSettingsStore } from '@/store/settings';
 import { ColorDropdowns } from './ColorDropdowns';
 import { ThemeToggle } from './ThemeToggle';
@@ -240,6 +240,18 @@ export function SettingsPanel() {
               </Button>
             </div>
           </div>
+
+          {/* GitHub Link */}
+          <a
+            href="https://github.com/cpascariello/eth-checksum"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-2 right-2"
+          >
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Github className="h-4 w-4" />
+            </Button>
+          </a>
         </div>
       </div>
     </>
