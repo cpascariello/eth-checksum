@@ -116,5 +116,5 @@ View real aggregate data from this app on the Aleph Explorer:
 ### Further Reading
 
 - [`docs/aleph.md`](docs/aleph.md) — Architecture overview and user flows
-- [Aleph Aggregates Guide](https://docs.aleph.cloud/guides/messages/aggregate/) — Official documentation
-- [Aleph SDK Reference](https://docs.aleph.cloud/tools/aleph-sdk-ts/) — TypeScript SDK docs
+- [Aleph Aggregates Guide](https://docs.aleph.cloud/devhub/building-applications/messaging/object-types/aggregates.html) — Official documentation
+- [Aleph SDK Reference](https://docs.aleph.cloud/devhub/sdks-and-tools/) — TypeScript SDK docs

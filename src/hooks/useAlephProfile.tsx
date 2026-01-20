@@ -14,7 +14,7 @@
  *
  * This provides decentralized settings sync without a backend.
  *
- * Aleph Docs: https://docs.aleph.cloud/guides/messages/aggregate/
+ * Aleph Docs: https://docs.aleph.cloud/devhub/building-applications/messaging/object-types/aggregates.html
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';

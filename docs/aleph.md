@@ -154,5 +154,5 @@ The hook handles several error cases:
 ## Resources
 
 - [Aleph Documentation](https://docs.aleph.cloud/)
-- [Aggregates Guide](https://docs.aleph.cloud/guides/messages/aggregate/)
-- [SDK Reference](https://docs.aleph.cloud/tools/aleph-sdk-ts/)
+- [Aggregates Guide](https://docs.aleph.cloud/devhub/building-applications/messaging/object-types/aggregates.html)
+- [SDK Reference](https://docs.aleph.cloud/devhub/sdks-and-tools/)
