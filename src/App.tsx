@@ -22,7 +22,12 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col">
-      <Toaster position="bottom-right" />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          className: 'font-jetbrains-mono',
+        }}
+      />
       <SettingsPanel />
 
       <main className="flex-1 flex items-center justify-center px-4">
