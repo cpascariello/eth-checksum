@@ -16,7 +16,7 @@
 src/
 ├── config/aleph.ts           # Constants (channel, keys, chain ID)
 ├── services/aleph.ts         # Aleph SDK integration
-└── hooks/useAlephProfile.ts  # React hook for profile management
+└── hooks/useAlephProfile.tsx  # React hook for profile management
 ```
 
 ### config/aleph.ts
@@ -36,7 +36,7 @@ Two main functions:
 - `fetchProfile(address)` - Read operation, returns `ProfileData` if exists
 - `saveProfile(provider, settings, isDark)` - Write operation, stores profile (requires signature)
 
-### hooks/useAlephProfile.ts
+### hooks/useAlephProfile.tsx
 
 React hook that manages profile loading and saving:
 

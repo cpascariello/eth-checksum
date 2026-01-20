@@ -11,7 +11,7 @@
  * - Read operations are free (no signature needed)
  * - Write operations require a wallet signature (proves ownership)
  *
- * Learn more: https://docs.aleph.im/guides/messages/aggregate/
+ * Learn more: https://docs.aleph.cloud/guides/messages/aggregate/
  */
 
 // SDK packages overview:

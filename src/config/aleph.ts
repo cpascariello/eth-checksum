@@ -6,7 +6,7 @@
  * a centralized backend. Data is stored in "aggregates" - key-value pairs
  * associated with a wallet address.
  *
- * Learn more: https://docs.aleph.im/
+ * Learn more: https://docs.aleph.cloud/
  */
 
 /**
