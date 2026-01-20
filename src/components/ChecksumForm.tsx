@@ -53,7 +53,7 @@ export function ChecksumForm() {
   return (
     <Card className="relative z-10 shadow-xl bg-white dark:bg-neutral-950">
       <CardHeader>
-        <CardTitle className="text-xl font-thin text-center">
+        <CardTitle className="text-2xl font-jetbrains-mono font-extrabold text-neutral-700 dark:text-neutral-400 text-center">
           ETH Address Checksummer
         </CardTitle>
       </CardHeader>
@@ -78,7 +78,7 @@ export function ChecksumForm() {
         <Button
           onClick={handleChecksum}
           disabled={!inputValue.trim()}
-          className="w-full h-12"
+          className="w-full h-12 font-jetbrains-mono font-extrabold"
         >
           Checksum
         </Button>

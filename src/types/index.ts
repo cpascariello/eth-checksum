@@ -116,8 +116,8 @@ export const DEFAULT_SETTINGS = {
   squareStepIncrement: 0.1,
   squareRotation: 1,
   parallaxMultiplier: 2,
-  squareColorFamily: 'neutral' as TailwindColorFamily,
-  squareColorStep: 400 as TailwindColorStep,
+  squareColorFamily: 'zinc' as TailwindColorFamily,
+  squareColorStep: 800 as TailwindColorStep,
   randomColors: [] as SquareColor[],
 } as const;
 

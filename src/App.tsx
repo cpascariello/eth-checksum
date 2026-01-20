@@ -33,13 +33,13 @@ function App() {
       </main>
 
       <footer className="py-6 text-center">
-        <p className="text-xs text-neutral-400 dark:text-neutral-600">
+        <p className="text-xs font-jetbrains-mono font-thin text-neutral-400 dark:text-neutral-600">
           Hosted on{' '}
           <a
             href="https://aleph.cloud"
             target="_blank"
             rel="noreferrer noopener"
-            className="underline hover:text-neutral-600 dark:hover:text-neutral-400 transition-colors"
+            className="underline hover:text-neutral-600 dark:hover:text-neutral-400 font-extrabold transition-colors"
           >
             Aleph Cloud
           </a>

@@ -36,7 +36,7 @@ function SliderWithMultipliers({
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center text-sm">
-        <span className="font-thin">{label}</span>
+        <span className="font-thin text-[0.75rem] text-muted-foreground">{label}</span>
         <span className="text-muted-foreground tabular-nums">
           {formatValue(value)}
         </span>
@@ -82,7 +82,7 @@ function CollapsibleSection({
     <div className="border border-border rounded-md bg-muted/15">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between text-base font-semibold w-full text-left p-4"
+        className="flex items-center justify-between text-base font-jetbrains-mono font-semibold text-muted-foreground w-full text-left p-4"
       >
         {title}
         <ChevronDown

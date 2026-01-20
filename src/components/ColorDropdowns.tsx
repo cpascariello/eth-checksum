@@ -46,9 +46,9 @@ export function ColorDropdowns() {
         />
       )}
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 text-[0.75rem]">
         <div className="space-y-2">
-          <label className="text-sm font-thin">Color Family</label>
+          <label className="font-thin">Color Family</label>
           <Select
             value={squareColorFamily}
             onValueChange={(v) => updateSetting('squareColorFamily', v as TailwindColorFamily)}
@@ -73,7 +73,7 @@ export function ColorDropdowns() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-thin">Color Shade</label>
+          <label className="font-thin">Color Shade</label>
           <Select
             value={String(squareColorStep)}
             onValueChange={(v) => updateSetting('squareColorStep', Number(v) as TailwindColorStep)}
