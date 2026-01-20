@@ -4,6 +4,21 @@
 
 `src/store/settings.ts` - Single Zustand store for all app state.
 
+## Default Values
+
+Current defaults defined in `src/types/index.ts`:
+
+| Setting | Default Value |
+|---------|---------------|
+| `squareCount` | `50` |
+| `squareStep` | `5` |
+| `squareStepIncrement` | `0.1` |
+| `squareRotation` | `1` |
+| `parallaxMultiplier` | `2` |
+| `squareColorFamily` | `'zinc'` |
+| `squareColorStep` | `800` |
+| `randomColors` | `[]` (empty array) |
+
 ## Current Settings
 
 Defined in `src/types/index.ts`:

@@ -64,3 +64,21 @@ All persistent state lives in Zustand store (`src/store/settings.ts`):
 - Dark mode via `.dark` class on `<html>`
 - Component styles use `cn()` helper for conditional classes
 - Colors reference CSS variables (e.g., `bg-background`, `text-foreground`)
+
+### Font Integration
+
+JetBrains Mono is loaded via Google Fonts in `index.html`:
+
+```html
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+```
+
+CSS variables defined in `src/index.css` (inside `@theme inline`):
+
+```css
+--font-jetbrains-mono: 'JetBrains Mono', monospace;
+--font-sans: 'JetBrains Mono', monospace;
+--font-mono: 'JetBrains Mono', monospace;
+```
+
+All three font variables point to JetBrains Mono, making it the default font throughout the app.

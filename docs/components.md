@@ -44,6 +44,33 @@ import { cn } from '@/lib/utils';
 )} />
 ```
 
+### Font Styling Pattern
+
+JetBrains Mono is used throughout with varying weights:
+
+| Weight | Class | Usage |
+|--------|-------|-------|
+| 100 | `font-thin` | Subtle footer text |
+| 600 | `font-semibold` | Section headers |
+| 800 | `font-extrabold` | Titles, primary buttons |
+
+Usage examples:
+```tsx
+// Title (ChecksumForm)
+<CardTitle className="text-2xl font-jetbrains-mono font-extrabold">
+
+// Section header (SettingsPanel CollapsibleSection)
+<button className="text-base font-jetbrains-mono font-semibold">
+
+// Footer text (App.tsx)
+<p className="text-xs font-jetbrains-mono font-thin">
+
+// Monospace content (addresses, code)
+<span className="font-mono">
+```
+
+The `font-jetbrains-mono` class explicitly uses JetBrains Mono, while `font-mono` uses the CSS variable (also JetBrains Mono).
+
 ## SettingsPanel Structure
 
 The settings panel uses custom components:
